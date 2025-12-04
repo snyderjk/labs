@@ -1,0 +1,12 @@
+{
+  "name": "labs-dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "remoteUser": "root",
+  "runArgs": ["--security-opt", "label=disable"],
+  "postCreateCommand": "git config --global init.defaultBranch main && git config --global --add safe.directory /workspace"
+}
