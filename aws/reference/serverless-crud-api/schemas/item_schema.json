@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "required": ["id", "name"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier (UUID format)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Item name",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional item description",
+      "maxLength": 500
+    },
+    "status": {
+      "type": "string",
+      "description": "Item status",
+      "enum": ["active", "inactive"],
+      "default": "active"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Flexilble key-value pairs for additional data"
+    }
+  }
+}
