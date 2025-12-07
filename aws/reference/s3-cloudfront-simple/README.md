@@ -1,8 +1,6 @@
 # S3 + CloudFront Static Website - Terraform Reference
 
-This project demonstrates deploying a static website using AWS S3 and CloudFront CDN, fully managed with Terraform. This is part of a growing collection of AWS Infrastructure as Code projects that can be used as reference implementations for future work.
-
-The implementation follows AWS best practices by using Origin Access Control (OAC) to keep the S3 bucket private, ensuring all traffic flows through the CloudFront distribution.
+Terraform configuration for deploying a static site to S3 behind CloudFront CDN. Uses Origin Access Control (OAC) to keep the bucket private while allowing CloudFront access.
 
 ## Architecture
 
@@ -14,21 +12,14 @@ The implementation follows AWS best practices by using Origin Access Control (OA
 - **Origin Access Control (OAC)** - AWS-recommended method for CloudFront-to-S3 authentication
 
 ### How it Works
-1. User requests content via CloudFront domain URL
-2. CloudFront checks edge location cache (1 hour TTL)
-3. On cache miss, CloudFront authenticates to S3 using OAC and retrieves content
-4. Content is cached and served to user
 
-The S3 bucket remains fully private with all public access blocked, ensuring content is only accessible through the CloudFront distribution.
+CloudFront serves cached content from edge locations (1hr TTL). On cache miss, it authenticates to the private S3 bucket using OAC. The bucket has all public access blocked.
 
 ## Prerequisites
 
 - Terraform >= v1.14
-- AWS CLI v2 - configured with credentials for account that has access to manage S3, Cloudfront, and IAM resources
-- S3 backend for Terraform state (configured in backend.tf)
-  - S3 Bucket with versioning enabled
-  - Dynamo table with 'LockID' partition key (String type)
-  - See [Terraform S3 Backend Documentation](https://developer.hashicorp.com/terraform/language/backend/s3)
+- AWS CLI v2 configured with appropriate credentials
+- S3 backend for Terraform state (bucket + DynamoDB table with LockID key)
 
 ## Usage
 
@@ -73,7 +64,7 @@ terraform destroy
 
 After successful deployment, Terraform outputs the CloudFront domain:
 ```
-domain = "d1234567890.cloudfront.net"
+domain = "<generated-subomain>.cloudfront.net"
 ```
 
 Navigate to this URL in your browser to view your site.
@@ -85,10 +76,9 @@ Navigate to this URL in your browser to view your site.
 - Easy deployment, update, and destroy through Terraform deployment
 
 ### Future Enhancements
-- HTTP Verbs limited to read-only website. May update variables to allow user to provide verbs needed
-- After update, CloudFront still has cached content for TTL (1 hour), may need to provide option to invalidate CloudFront for time-sensitive deployments
-- Add Route53 and ACM certificate resources for custom domains
-- Expand support for multiple environments (dev/staging/prod) with separate state files
+- Currently only allows GET/HEAD, make configurable for other verbs
+- Add cache invalidation trigger for deployments
+- Custom domain support (Route53 + ACM)
 
 ## Author
 
